@@ -1,3 +1,14 @@
+
+local config = { -- you can safely change these if you arent retarded but they should already have the best settings
+togglekey = Enum.KeyCode.Q, -- change "Q" to another key if you want to change it for some reason
+ offset = 12, -- offset of how far away you want to be from your target
+ speed = 11, -- speed of how fast you want to spin around target to make it harder to hit you
+ y = 1.5 -- how far above you want to be to your target
+
+}
+
+local x = 0
+local z = math.pi / 2
 local toggle = false
 local target = nil
 local gamestarted = false
@@ -65,7 +76,7 @@ function makenotif(text)
 game:GetService("UserInputService").InputBegan:connect(function(key,chat)
 if chat then return end
 
-if key.KeyCode == Enum.KeyCode.Q then
+if key.KeyCode == config.togglekey then
 toggle = not toggle
 
 if toggle == true then
@@ -79,7 +90,7 @@ makenotif("autofarm turned off")
 end)
 
 task.spawn(function() -- this is getting overcomplicated thanks to the most retarded anticheat ive ever seen on this game but i cba to recode it
-while task.wait(0.7) do
+while task.wait(0.6) do
 if throw == true then
 pcall(function()
 game.ReplicatedStorage.Remotes.ThrowKnife:FireServer(target.HumanoidRootPart.Position + Vector3.new(target.Humanoid.MoveDirection.X,0,target.Humanoid.MoveDirection.Z),0,game.Players.LocalPlayer.Character.Knife.RotateValue.Value)
@@ -115,9 +126,11 @@ game.Players.LocalPlayer.Backpack:FindFirstChildWhichIsA("Tool").Parent = game.P
 end
 
 if game.Players.LocalPlayer.Character.Humanoid.Health ~= 0 and gamestarted == true then -- stop erroring faggot
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame + Vector3.new(math.random(0,5),math.random(6,7),math.random(0,5))
+x = x + config.speed / 100
+z = z + config.speed / 100
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame + Vector3.new(math.sin(x) * config.offset, config.y, math.sin(z) * config.offset)
 local targmag = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - target.HumanoidRootPart.Position).magnitude
-if targmag < 30 then
+if targmag < 50 then
         throw = true
 else
         throw = false
@@ -131,5 +144,3 @@ end)
 
 
 makenotif("Assassin autofarm executed, made by Scartesu")
-task.wait(3)
-makenotif("Press q to toggle")
